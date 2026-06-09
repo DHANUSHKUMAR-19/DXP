@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DXP — Checkout</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .checkout-wrap  { padding: 3rem 2rem; max-width: 1100px; margin: 0 auto; }
+    .checkout-title { font-family: var(--ff-display); font-size: 40px; font-weight: 300; margin-bottom: 1.5rem; }
+
+    .checkout-steps { display: flex; border-bottom: 0.5px solid var(--border); margin-bottom: 2.5rem; }
+    .step-item { padding: 0.75rem 1.5rem; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-mute); border-bottom: 2px solid transparent; margin-bottom: -0.5px; cursor: pointer; transition: all 0.2s; }
+    .step-item.active { color: var(--ink); border-bottom-color: var(--accent); }
+    .step-item.done   { color: var(--accent); }
+
+    .checkout-layout { display: grid; grid-template-columns: 1fr 340px; gap: 3rem; align-items: start; }
+    .checkout-form   { }
+
+    .form-section-title { font-family: var(--ff-display); font-size: 22px; font-weight: 400; margin-bottom: 1.25rem; }
+    .form-section { margin-bottom: 2rem; }
+
+    .order-panel { background: var(--paper-warm); padding: 1.5rem; border-radius: var(--radius); border: 0.5px solid var(--border); position: sticky; top: calc(var(--nav-h) + 1rem); }
+    .panel-title { font-family: var(--ff-display); font-size: 20px; font-weight: 400; margin-bottom: 1.25rem; }
+
+    .mini-item { display: flex; gap: 1rem; margin-bottom: 1rem; align-items: center; }
+    .mini-img  { width: 56px; aspect-ratio: 3/4; background: var(--paper); border-radius: var(--radius); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .mini-info { flex: 1; font-size: 13px; }
+    .mini-name { font-weight: 500; margin-bottom: 2px; }
+    .mini-meta { color: var(--ink-mute); font-size: 12px; }
+    .mini-price{ font-size: 13px; font-weight: 500; white-space: nowrap; }
+
+    .summary-divider { border: none; border-top: 0.5px solid var(--border); margin: 1rem 0; }
+    .summary-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; }
+    .summary-row.total { font-weight: 500; font-size: 16px; border-top: 0.5px solid var(--border-strong); padding-top: 10px; margin-top: 4px; }
+
+    .payment-methods { display: flex; gap: 10px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .pay-method { padding: 10px 18px; border: 0.5px solid var(--border); border-radius: var(--radius); font-size: 13px; cursor: pointer; transition: all 0.15s; background: var(--white); }
+    .pay-method.active { border-color: var(--accent); background: rgba(200,169,110,0.08); }
+  </style>
+
+  <!-- ADOBE LAUNCH EMBED
+  <script src="https://assets.adobedtm.com/YOUR_PROPERTY_ID/launch-EN_XXXXX.min.js" async></script>
+  -->
+</head>
+<body>
+
+<div id="vaux-nav"></div>
+
+<div class="breadcrumb container">
+  <a href="index.html">Home</a>
+  <span class="sep">/</span>
+  <a href="cart.html">Bag</a>
+  <span class="sep">/</span>
+  <span>Checkout</span>
+</div>
+
+<div class="checkout-wrap">
+  <h1 class="checkout-title">Checkout</h1>
+
+  <div class="checkout-steps">
+    <span class="step-item active" id="step-1">Delivery</span>
+    <span class="step-item"        id="step-2">Payment</span>
+    <span class="step-item"        id="step-3">Review</span>
+  </div>
+
+  <div class="checkout-layout">
+
+    <!-- FORM -->
+    <div class="checkout-form">
+
+      <!-- DELIVERY -->
+      <div class="form-section">
+        <h2 class="form-section-title">Delivery Address</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input type="text" class="form-input" placeholder="First name" value="Dhanush">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input type="text" class="form-input" placeholder="Last name">
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-input" placeholder="you@example.com">
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="form-group">
+            <label class="form-label">Street Address</label>
+            <input type="text" class="form-input" placeholder="House / flat, street name">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">City</label>
+            <input type="text" class="form-input" placeholder="City" value="Bengaluru">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pincode</label>
+            <input type="text" class="form-input" placeholder="560001">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">State</label>
+            <select class="form-select">
+              <option>Karnataka</option>
+              <option>Maharashtra</option>
+              <option>Delhi</option>
+              <option>Tamil Nadu</option>
+              <option>Telangana</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone</label>
+            <input type="tel" class="form-input" placeholder="+91 00000 00000">
+          </div>
+        </div>
+      </div>
+
+      <!-- PAYMENT -->
+      <div class="form-section">
+        <h2 class="form-section-title">Payment</h2>
+        <!-- TARGET MBOX: vaux-checkout-payment — promote preferred payment method -->
+        <div class="payment-methods">
+          <button class="pay-method active" onclick="selectPayment(this,'Credit / Debit Card')">Credit / Debit Card</button>
+          <button class="pay-method" onclick="selectPayment(this,'UPI')">UPI</button>
+          <button class="pay-method" onclick="selectPayment(this,'Net Banking')">Net Banking</button>
+          <button class="pay-method" onclick="selectPayment(this,'EMI')">EMI</button>
+        </div>
+
+        <div id="card-fields">
+          <div class="form-row full">
+            <div class="form-group">
+              <label class="form-label">Card Number</label>
+              <input type="text" class="form-input" placeholder="4242 4242 4242 4242">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Expiry</label>
+              <input type="text" class="form-input" placeholder="MM / YY">
+            </div>
+            <div class="form-group">
+              <label class="form-label">CVV</label>
+              <input type="text" class="form-input" placeholder="&bull;&bull;&bull;">
+            </div>
+          </div>
+          <div class="form-row full">
+            <div class="form-group">
+              <label class="form-label">Name on Card</label>
+              <input type="text" class="form-input" placeholder="As printed on card">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-primary" style="width:100%;padding:16px;font-size:13px" onclick="placeOrder()">
+        Place Order &rarr;
+      </button>
+      <p style="font-size:12px;color:var(--ink-mute);margin-top:1rem">
+        By placing your order you agree to our <a href="#" style="text-decoration:underline">Terms of Use</a> and <a href="#" style="text-decoration:underline">Privacy Policy</a>.
+      </p>
+    </div>
+
+    <!-- ORDER PANEL -->
+    <div class="order-panel">
+      <h2 class="panel-title">Your Order</h2>
+      <div id="order-items"></div>
+      <hr class="summary-divider">
+      <div class="summary-row"><span>Subtotal</span><span id="co-subtotal">₹0</span></div>
+      <div class="summary-row"><span>Shipping</span><span class="text-success">Free</span></div>
+      <div class="summary-row"><span>Tax (18% GST)</span><span id="co-tax">₹0</span></div>
+      <div class="summary-row total"><span>Total</span><span id="co-total">₹0</span></div>
+    </div>
+
+  </div>
+</div>
+
+<div id="vaux-footer"></div>
+<div id="vaux-toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/footer.js"></script>
+<script src="js/analytics.js"></script>
+<script>
+  VAUX.nav.init('');
+  VAUX.footer.init();
+
+  var cart          = VAUX.getCart();
+  var selectedPayment = 'Credit / Debit Card';
+
+  // Render order summary panel
+  var sub   = cart.reduce(function (s, i) { return s + i.price * i.qty; }, 0);
+  var tax   = Math.round(sub * 0.18);
+  var total = sub + tax;
+
+  document.getElementById('order-items').innerHTML = cart.map(function (item) {
+    return `<div class="mini-item">
+      <div class="mini-img" style="overflow:hidden"><img src="${item.image||''}" alt="${item.name}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"></div>
+      <div class="mini-info">
+        <p class="mini-name">${item.name}</p>
+        <p class="mini-meta">Size ${item.size} &middot; Qty ${item.qty}</p>
+      </div>
+      <span class="mini-price">${VAUX.fmt(item.price * item.qty)}</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('co-subtotal').textContent = VAUX.fmt(sub);
+  document.getElementById('co-tax').textContent      = VAUX.fmt(tax);
+  document.getElementById('co-total').textContent    = VAUX.fmt(total);
+
+  function selectPayment(btn, method) {
+    document.querySelectorAll('.pay-method').forEach(function (b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    selectedPayment = method;
+    // ACDL: checkout step 2 with payment option
+    VAUX.analytics.checkoutStep(2, method, cart);
+  }
+
+  function placeOrder() {
+    var orderId = 'VAX-' + Math.floor(10000 + Math.random() * 90000);
+    // Store order info for confirmation page
+    sessionStorage.setItem('dxp_last_order', JSON.stringify({ orderId: orderId, total: total, tax: tax, cart: cart }));
+    // ACDL: purchase event
+    VAUX.analytics.purchase(orderId, cart, sub, tax, 0);
+    // Clear cart
+    VAUX.saveCart([]);
+    window.location.href = 'confirmation.html';
+  }
+
+  // ACDL: checkout step 1
+  VAUX.analytics.checkoutStep(1, 'delivery', cart);
+
+  // ACDL: page view
+  VAUX.analytics.pageView({
+    pageName     : 'dxp:checkout',
+    pageType     : 'checkout',
+    siteSectionL1: 'checkout',
+    channel      : 'ecommerce'
+  });
+</script>
+</body>
+</html>

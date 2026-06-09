@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DXP — Your Bag</title>
+  <script src="https://assets.adobedtm.com/01296dd00565/0817753d32bc/launch-7acbfa7da51d-development.min.js" async></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .cart-wrap   { padding: 3rem 2rem; max-width: 1100px; margin: 0 auto; }
+    .cart-title  { font-family: var(--ff-display); font-size: 40px; font-weight: 300; margin-bottom: 2rem; }
+    .cart-layout { display: grid; grid-template-columns: 1fr 340px; gap: 3rem; align-items: start; }
+
+    .cart-item { display: grid; grid-template-columns: 100px 1fr auto; gap: 1.5rem; padding: 1.5rem 0; border-bottom: 0.5px solid var(--border); align-items: start; }
+    .item-img  { aspect-ratio: 3/4; background: var(--paper-warm); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; font-size: 32px; }
+    .item-name { font-family: var(--ff-display); font-size: 18px; font-weight: 400; margin-bottom: 4px; }
+    .item-meta { font-size: 12px; color: var(--ink-mute); margin-bottom: 0.75rem; }
+    .item-price{ font-size: 16px; font-weight: 500; text-align: right; }
+    .item-remove { font-size: 12px; color: var(--ink-mute); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; margin-top: 8px; display: block; text-align: right; }
+    .item-remove:hover { color: var(--danger); }
+
+    .qty-control { display: flex; align-items: center; width: fit-content; border: 0.5px solid var(--border); border-radius: var(--radius); }
+    .qty-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; color: var(--ink-soft); background: none; border: none; transition: color 0.15s; }
+    .qty-btn:hover { color: var(--ink); }
+    .qty-val { width: 36px; text-align: center; font-size: 14px; border-left: 0.5px solid var(--border); border-right: 0.5px solid var(--border); height: 32px; line-height: 32px; }
+
+    .order-summary { background: var(--paper-warm); padding: 1.5rem; border-radius: var(--radius); border: 0.5px solid var(--border); position: sticky; top: calc(var(--nav-h) + 1rem); }
+    .summary-title { font-family: var(--ff-display); font-size: 22px; font-weight: 400; margin-bottom: 1.5rem; }
+    .summary-row   { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 10px; }
+    .summary-row.total { font-weight: 500; font-size: 16px; border-top: 0.5px solid var(--border-strong); padding-top: 10px; margin-top: 4px; }
+
+    .promo-row { display: flex; gap: 8px; margin: 1.25rem 0; }
+    .promo-row input { flex: 1; border: 0.5px solid var(--border); padding: 9px 12px; font-size: 13px; font-family: var(--ff-body); border-radius: var(--radius); background: var(--white); outline: none; }
+    .promo-row input:focus { border-color: var(--accent); }
+    .promo-row button { padding: 9px 16px; border: 0.5px solid var(--border-strong); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; border-radius: var(--radius); font-family: var(--ff-body); background: none; transition: all 0.2s; }
+    .promo-row button:hover { background: var(--ink); color: var(--white); border-color: var(--ink); }
+
+    .empty-cart { text-align: center; padding: 5rem 0; }
+    .empty-title{ font-family: var(--ff-display); font-size: 32px; font-weight: 300; margin-bottom: 1rem; }
+    .empty-sub  { font-size: 14px; color: var(--ink-mute); margin-bottom: 2rem; }
+  </style>
+
+  <!-- ADOBE LAUNCH EMBED
+  <script src="https://assets.adobedtm.com/YOUR_PROPERTY_ID/launch-EN_XXXXX.min.js" async></script>
+  -->
+</head>
+<body>
+
+<div id="vaux-nav"></div>
+
+<div class="breadcrumb container">
+  <a href="index.html">Home</a>
+  <span class="sep">/</span>
+  <span>Your Bag</span>
+</div>
+
+<div class="cart-wrap">
+  <h1 class="cart-title">Your Bag <span id="cart-count-label" style="font-size:22px;color:var(--ink-mute);font-weight:300"></span></h1>
+
+  <div id="cart-content"></div>
+</div>
+
+<div id="vaux-footer"></div>
+<div id="vaux-toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/footer.js"></script>
+<script src="js/analytics.js"></script>
+<script>
+  VAUX.nav.init('');
+  VAUX.footer.init();
+
+  var cart = VAUX.getCart();
+
+  function renderCart() {
+    cart = VAUX.getCart();
+    var wrap = document.getElementById('cart-content');
+    document.getElementById('cart-count-label').textContent = cart.length > 0 ? '(' + cart.length + ' item' + (cart.length > 1 ? 's' : '') + ')' : '';
+
+    if (cart.length === 0) {
+      wrap.innerHTML = `<div class="empty-cart">
+        <p class="empty-title">Your bag is empty</p>
+        <p class="empty-sub">Looks like you haven't added anything yet.</p>
+        <a href="plp.html?cat=Women" class="btn-primary">Continue Shopping</a>
+      </div>`;
+      return;
+    }
+
+    var sub     = cart.reduce(function (s, i) { return s + i.price * i.qty; }, 0);
+    var tax     = Math.round(sub * 0.18);
+    var total   = sub + tax;
+
+    wrap.innerHTML = `
+      <div class="cart-layout">
+        <div id="cart-items"></div>
+        <div class="order-summary">
+          <h2 class="summary-title">Order Summary</h2>
+          <div class="summary-row"><span>Subtotal</span><span>${VAUX.fmt(sub)}</span></div>
+          <div class="summary-row"><span>Shipping</span><span class="text-success">Free</span></div>
+          <div class="summary-row"><span>Tax (18% GST)</span><span>${VAUX.fmt(tax)}</span></div>
+          <div class="summary-row total"><span>Total</span><span>${VAUX.fmt(total)}</span></div>
+          <div class="promo-row">
+            <input type="text" placeholder="Promo code">
+            <button>Apply</button>
+          </div>
+          <!-- TARGET MBOX: vaux-cart-cta — A/B test checkout button -->
+          <a href="checkout.html" class="btn-primary" style="display:block;text-align:center;width:100%">Proceed to Checkout</a>
+          <p style="font-size:12px;color:var(--ink-mute);text-align:center;margin-top:1rem">🔒 Secure checkout</p>
+        </div>
+      </div>`;
+
+    var itemsWrap = document.getElementById('cart-items');
+    itemsWrap.innerHTML = cart.map(function (item, i) {
+      return `<div class="cart-item">
+        <div class="item-img" style="overflow:hidden"><img src="${item.image||''}" alt="${item.name}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"></div>
+        <div>
+          <p class="item-name">${item.name}</p>
+          <p class="item-meta">${item.brand} &middot; Size: ${item.size} &middot; ${item.color}</p>
+          <div class="qty-control">
+            <button class="qty-btn" onclick="changeQty(${i}, -1)">-</button>
+            <span class="qty-val">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty(${i}, 1)">+</button>
+          </div>
+        </div>
+        <div>
+          <p class="item-price">${VAUX.fmt(item.price * item.qty)}</p>
+          <span class="item-remove" onclick="removeItem(${i})">Remove</span>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function changeQty(idx, delta) {
+    cart[idx].qty = Math.max(1, cart[idx].qty + delta);
+    VAUX.saveCart(cart);
+    VAUX.updateCartBadge();
+    renderCart();
+  }
+
+  function removeItem(idx) {
+    var removed = cart.splice(idx, 1)[0];
+    VAUX.saveCart(cart);
+    VAUX.updateCartBadge();
+    // ACDL: remove from cart
+    var product = VAUX.getProductById(removed.productId);
+    if (product) VAUX.analytics.removeFromCart(product, removed.size, removed.qty);
+    renderCart();
+  }
+
+  renderCart();
+
+  // ACDL: checkout step 0 — cart view
+  VAUX.analytics.checkoutStep(0, 'cart view', cart);
+
+  // ACDL: page view
+  VAUX.analytics.pageView({
+    pageName     : 'dxp:cart',
+    pageType     : 'cart',
+    siteSectionL1: 'cart',
+    channel      : 'ecommerce'
+  });
+</script>
+</body>
+</html>
+<!-- patched above -->

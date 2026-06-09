@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DXP — New Season Fashion</title>
+  <script src="https://assets.adobedtm.com/01296dd00565/0817753d32bc/launch-7acbfa7da51d-development.min.js" async></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .hero { height: calc(100vh - var(--nav-h)); display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; }
+    .hero-left { position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; padding: 4rem; }
+    .hero-left img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.18) 60%); }
+    .hero-content { position: relative; z-index: 1; }
+    .hero-eyebrow { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; }
+    .hero-title   { font-family: var(--ff-display); font-size: clamp(46px,5vw,70px); font-weight: 300; color: var(--white); line-height: 1.06; margin-bottom: 1.5rem; }
+    .hero-title em { font-style: italic; color: var(--accent); }
+    .hero-sub { color: rgba(255,255,255,0.6); font-size: 14px; margin-bottom: 2.5rem; max-width: 300px; }
+    .hero-right { background: var(--paper-warm); display: grid; grid-template-rows: 1fr 1fr; }
+    .hero-card { position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; padding: 2rem; border-bottom: 0.5px solid var(--border); cursor: pointer; }
+    .hero-card:last-child { border-bottom: none; }
+    .hero-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+    .hero-card:hover img { transform: scale(1.04); }
+    .hero-card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 55%); }
+    .hero-card-content { position: relative; z-index: 1; }
+    .hero-card-label { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.7); }
+    .hero-card-title { font-family: var(--ff-display); font-size: 24px; font-weight: 400; color: var(--white); margin-top: 4px; }
+    .hero-card-arrow { font-size: 12px; color: var(--accent); letter-spacing: 0.08em; margin-top: 8px; display: block; }
+
+    .categories-section { padding: 5rem 2rem; }
+    .categories-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--border); border: 0.5px solid var(--border); }
+    .cat-card { aspect-ratio: 3/4; display: flex; flex-direction: column; justify-content: flex-end; padding: 1.5rem; position: relative; overflow: hidden; cursor: pointer; }
+    .cat-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+    .cat-card:hover img { transform: scale(1.05); }
+    .cat-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.58) 0%, transparent 55%); }
+    .cat-content { position: relative; z-index: 1; }
+    .cat-label   { font-family: var(--ff-display); font-size: 22px; font-weight: 400; color: var(--white); }
+    .cat-count   { font-size: 11px; color: rgba(255,255,255,0.6); letter-spacing: 0.08em; margin-top: 4px; }
+
+    .products-section { padding: 0 2rem 5rem; }
+    .products-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.5rem; }
+
+    .featured-banner { margin: 0 2rem 5rem; display: grid; grid-template-columns: 1fr 1fr; min-height: 420px; border-radius: var(--radius); overflow: hidden; }
+    .featured-img { position: relative; overflow: hidden; }
+    .featured-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .featured-content { background: var(--ink); padding: 4rem; display: flex; flex-direction: column; justify-content: center; color: var(--white); }
+    .featured-eyebrow { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; }
+    .featured-title   { font-family: var(--ff-display); font-size: 40px; font-weight: 300; line-height: 1.1; margin-bottom: 1.5rem; }
+    .featured-title em { font-style: italic; color: var(--accent); }
+    .featured-desc    { color: rgba(255,255,255,0.45); font-size: 14px; margin-bottom: 2rem; line-height: 1.75; }
+  </style>
+  <!-- ADOBE LAUNCH EMBED
+  <script src="https://assets.adobedtm.com/YOUR_PROPERTY_ID/launch-EN_XXXXX.min.js" async></script>
+  -->
+</head>
+<body>
+<div id="vaux-nav"></div>
+
+<!-- HERO -->
+<section class="hero" data-link-region="hero">
+  <div class="hero-left">
+    <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1200&q=80" alt="Hero fashion">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Spring / Summer 2025</p>
+      <h1 class="hero-title">Dress the<br><em>story</em><br>you live</h1>
+      <p class="hero-sub">Curated fashion from independent designers and heritage labels.</p>
+      <a href="plp.html?cat=New Arrivals" class="btn-primary accent" id="hero-cta-btn">Shop New Arrivals</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <a class="hero-card" href="plp.html?cat=Women">
+      <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&q=80" alt="Women's Collection">
+      <div class="hero-card-overlay"></div>
+      <div class="hero-card-content">
+        <p class="hero-card-label">Collection</p>
+        <h2 class="hero-card-title">Women's Edit</h2>
+        <span class="hero-card-arrow">Explore &rarr;</span>
+      </div>
+    </a>
+    <a class="hero-card" href="plp.html?cat=Sale">
+      <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=800&q=80" alt="Sale">
+      <div class="hero-card-overlay"></div>
+      <div class="hero-card-content">
+        <p class="hero-card-label">Up to 50% off</p>
+        <h2 class="hero-card-title">End of Season Sale</h2>
+        <span class="hero-card-arrow">Shop Sale &rarr;</span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item">Free shipping over ₹2999 <span class="marquee-dot">&#9679;</span></span>
+    <span class="marquee-item">New arrivals every Friday <span class="marquee-dot">&#9679;</span></span>
+    <span class="marquee-item">Easy 30-day returns <span class="marquee-dot">&#9679;</span></span>
+    <span class="marquee-item">Sustainable packaging <span class="marquee-dot">&#9679;</span></span>
+    <span class="marquee-item">Members get early access <span class="marquee-dot">&#9679;</span></span>
+    <span class="marquee-item">Free shipping over ₹2999 <span class="marquee-dot">&#9679;</span></span>
+    <span class="marquee-item">New arrivals every Friday <span class="marquee-dot">&#9679;</span></span>
+    <span class="marquee-item">Easy 30-day returns <span class="marquee-dot">&#9679;</span></span>
+    <span class="marquee-item">Sustainable packaging <span class="marquee-dot">&#9679;</span></span>
+    <span class="marquee-item">Members get early access <span class="marquee-dot">&#9679;</span></span>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<section class="categories-section" data-link-region="categories">
+  <div class="section-header">
+    <h2 class="section-title">Shop by Category</h2>
+    <a class="section-link" href="plp.html?cat=All" data-link-name="View All - Categories">View all &rarr;</a>
+  </div>
+  <div class="categories-grid">
+    <a class="cat-card" href="plp.html?cat=Women">
+      <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=800&q=80" alt="Women">
+      <div class="cat-overlay"></div>
+      <div class="cat-content"><p class="cat-label">Women</p><p class="cat-count">148 styles</p></div>
+    </a>
+    <a class="cat-card" href="plp.html?cat=Men">
+      <img src="https://images.unsplash.com/photo-1507680434567-5739c80be1ac?w=800&q=80" alt="Men">
+      <div class="cat-overlay"></div>
+      <div class="cat-content"><p class="cat-label">Men</p><p class="cat-count">96 styles</p></div>
+    </a>
+    <a class="cat-card" href="plp.html?cat=New Arrivals">
+      <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&q=80" alt="New Arrivals">
+      <div class="cat-overlay"></div>
+      <div class="cat-content"><p class="cat-label">New Arrivals</p><p class="cat-count">32 this week</p></div>
+    </a>
+    <a class="cat-card" href="plp.html?cat=Sale">
+      <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=800&q=80" alt="Sale">
+      <div class="cat-overlay"></div>
+      <div class="cat-content"><p class="cat-label">Sale</p><p class="cat-count">Up to 50% off</p></div>
+    </a>
+  </div>
+</section>
+
+<!-- TRENDING PRODUCTS -->
+<section class="products-section" data-link-region="trending-products">
+  <div class="section-header">
+    <h2 class="section-title">Trending Now</h2>
+    <a class="section-link" href="plp.html?cat=All" data-link-name="View All - Trending">View all &rarr;</a>
+  </div>
+  <div class="products-grid" id="home-products"></div>
+</section>
+
+<!-- FEATURED BANNER -->
+<div class="featured-banner" id="featured-banner" data-link-region="featured-banner">
+  <div class="featured-img">
+    <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1200&q=80" alt="DXP Collection">
+  </div>
+  <div class="featured-content">
+    <p class="featured-eyebrow">Brand Story</p>
+    <h2 class="featured-title">Fashion that<br>fits your <em>world</em></h2>
+    <p class="featured-desc">We partner with artisans, independent studios, and ethical manufacturers to bring you clothes worth keeping.</p>
+    <a href="plp.html?cat=Women" class="btn-primary">Explore the Collection</a>
+  </div>
+</div>
+
+<div id="vaux-footer"></div>
+<div id="vaux-toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/footer.js"></script>
+<script src="js/analytics.js"></script>
+<script>
+  VAUX.nav.init('home');
+  VAUX.footer.init();
+
+  var grid = document.getElementById('home-products');
+  VAUX.PRODUCTS.forEach(function(p) {
+    var card = document.createElement('div');
+    card.className = 'product-card';
+    card.innerHTML = `
+      <div class="product-img-wrap">
+        <img src="${p.image}" alt="${p.name}" loading="lazy">
+        ${p.tag ? `<span class="product-tag ${p.tag.toLowerCase()}">${p.tag}</span>` : ''}
+        <div class="product-actions">
+          <button class="product-action-btn" data-id="${p.id}">Quick Add</button>
+          <button class="product-action-btn wish">&#9825;</button>
+        </div>
+      </div>
+      <p class="product-brand">${p.brand}</p>
+      <p class="product-name">${p.name}</p>
+      <p class="product-price">${p.oldPrice ? '<span class="old">'+VAUX.fmt(p.oldPrice)+'</span><span class="sale">'+VAUX.fmt(p.price)+'</span>' : VAUX.fmt(p.price)}</p>
+      <div class="product-swatches">${(p.swatches||[]).map(function(c){return '<div class="swatch" style="background:'+c+'"></div>';}).join('')}</div>
+    `;
+    card.addEventListener('click', function(e) {
+      if (e.target.classList.contains('product-action-btn') && e.target.dataset.id) {
+        e.stopPropagation();
+        VAUX.addToCart(p.id,'M','Default',1);
+        VAUX.analytics.addToCart(p,'M','Default',1);
+        showToast(p.name + ' added to bag');
+        return;
+      }
+      if (!e.target.classList.contains('wish')) window.location.href = 'pdp.html?id=' + p.id;
+    });
+    grid.appendChild(card);
+  });
+
+  VAUX.analytics.productListView(VAUX.PRODUCTS, 'Homepage Trending');
+  VAUX.analytics.pageView({ pageName:'dxp:home', pageType:'home', siteSectionL1:'home', channel:'ecommerce' });
+
+  function showToast(msg) {
+    var t = document.getElementById('vaux-toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 2600);
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DXP — Order Confirmed</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .confirm-wrap { padding: 5rem 2rem; max-width: 680px; margin: 0 auto; text-align: center; }
+
+    .confirm-icon {
+      width: 72px; height: 72px;
+      background: #eaf3de; border-radius: 50%;
+      margin: 0 auto 2rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; color: var(--success);
+    }
+    .confirm-title { font-family: var(--ff-display); font-size: 48px; font-weight: 300; margin-bottom: 1rem; line-height: 1.1; }
+    .confirm-title em { font-style: italic; color: var(--accent); }
+    .confirm-sub { font-size: 15px; color: var(--ink-soft); margin-bottom: 3rem; line-height: 1.7; }
+
+    .confirm-box { background: var(--paper-warm); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 2rem; text-align: left; margin-bottom: 2rem; }
+    .confirm-order-label { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 0.5rem; }
+    .confirm-order-num   { font-family: var(--ff-display); font-size: 28px; font-weight: 400; margin-bottom: 1.5rem; }
+    .confirm-row { display: flex; justify-content: space-between; font-size: 14px; padding: 9px 0; border-bottom: 0.5px solid var(--border); }
+    .confirm-row:last-child { border-bottom: none; }
+
+    .confirm-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    .what-next { margin: 3rem 0 2rem; }
+    .what-next-title { font-family: var(--ff-display); font-size: 24px; font-weight: 400; margin-bottom: 1rem; }
+    .steps-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; text-align: center; }
+    .step-card { background: var(--paper-warm); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.5rem 1rem; }
+    .step-icon { font-size: 24px; margin-bottom: 0.75rem; }
+    .step-label { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+    .step-desc  { font-size: 12px; color: var(--ink-mute); line-height: 1.6; }
+  </style>
+
+  <!-- ADOBE LAUNCH EMBED
+  <script src="https://assets.adobedtm.com/YOUR_PROPERTY_ID/launch-EN_XXXXX.min.js" async></script>
+  -->
+</head>
+<body>
+
+<div id="vaux-nav"></div>
+
+<div class="confirm-wrap">
+
+  <div class="confirm-icon">✓</div>
+  <h1 class="confirm-title">Order <em>placed!</em></h1>
+  <p class="confirm-sub">Thank you for shopping with VAUX. You'll receive a confirmation email shortly with your tracking details.</p>
+
+  <!-- TARGET MBOX: vaux-confirmation-banner — post-purchase personalisation / loyalty offer -->
+  <div class="confirm-box">
+    <p class="confirm-order-label">Order Number</p>
+    <p class="confirm-order-num" id="order-num">#VAX-00000</p>
+    <div class="confirm-row"><span>Status</span><span class="text-success" style="font-weight:500">Confirmed</span></div>
+    <div class="confirm-row"><span>Estimated Delivery</span><span>4 to 6 business days</span></div>
+    <div class="confirm-row"><span>Payment</span><span id="payment-method">Card ending 4242</span></div>
+    <div class="confirm-row"><span>Subtotal</span><span id="order-subtotal">₹0</span></div>
+    <div class="confirm-row"><span>Tax (18% GST)</span><span id="order-tax">₹0</span></div>
+    <div class="confirm-row" style="font-weight:500"><span>Order Total</span><span id="order-total">₹0</span></div>
+  </div>
+
+  <div class="what-next">
+    <h2 class="what-next-title">What happens next</h2>
+    <div class="steps-row">
+      <div class="step-card">
+        <p class="step-icon">📧</p>
+        <p class="step-label">Confirmation Email</p>
+        <p class="step-desc">We'll email your receipt and order details within a few minutes.</p>
+      </div>
+      <div class="step-card">
+        <p class="step-icon">📦</p>
+        <p class="step-label">Order Packed</p>
+        <p class="step-desc">Your order will be picked and packed within 1 to 2 business days.</p>
+      </div>
+      <div class="step-card">
+        <p class="step-icon">🚚</p>
+        <p class="step-label">Out for Delivery</p>
+        <p class="step-desc">We'll send a tracking link once your order ships.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="confirm-actions">
+    <a href="index.html" class="btn-outline">Continue Shopping</a>
+    <a href="#" class="btn-primary accent">Track Order</a>
+  </div>
+
+</div>
+
+<div id="vaux-footer"></div>
+
+<script src="js/data.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/footer.js"></script>
+<script src="js/analytics.js"></script>
+<script>
+  VAUX.nav.init('');
+  VAUX.footer.init();
+
+  // Read last order from session
+  var orderData = null;
+  try { orderData = JSON.parse(sessionStorage.getItem('dxp_last_order')); } catch(e) {}
+
+  if (orderData) {
+    document.getElementById('order-num').textContent      = '#' + orderData.orderId;
+    document.getElementById('order-subtotal').textContent = VAUX.fmt(orderData.total - orderData.tax);
+    document.getElementById('order-tax').textContent      = VAUX.fmt(orderData.tax);
+    document.getElementById('order-total').textContent    = VAUX.fmt(orderData.total);
+  } else {
+    // Fallback if landed directly on page
+    var fallbackId = 'VAX-' + Math.floor(10000 + Math.random() * 90000);
+    document.getElementById('order-num').textContent = '#' + fallbackId;
+  }
+
+  // ACDL: page view
+  VAUX.analytics.pageView({
+    pageName     : 'dxp:confirmation',
+    pageType     : 'confirmation',
+    siteSectionL1: 'checkout',
+    siteSectionL2: 'confirmation',
+    channel      : 'ecommerce'
+  });
+
+  // Note: purchase event was already fired on checkout.html before redirect
+</script>
+</body>
+</html>

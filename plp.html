@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DXP — Shop</title>
+  <script src="https://assets.adobedtm.com/01296dd00565/0817753d32bc/launch-7acbfa7da51d-development.min.js" async></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .plp-cat-banner { height: 240px; position: relative; overflow: hidden; }
+    .plp-cat-banner img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .plp-cat-banner-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.15) 100%); }
+    .plp-cat-banner-content { position: absolute; bottom: 0; left: 0; padding: 2rem; }
+    .plp-cat-title { font-family: var(--ff-display); font-size: 44px; font-weight: 300; color: var(--white); }
+    .plp-cat-count { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 4px; }
+
+    .plp-body { display: grid; grid-template-columns: 220px 1fr; }
+    .plp-sidebar { border-right: 0.5px solid var(--border); padding: 2rem; position: sticky; top: var(--nav-h); height: calc(100vh - var(--nav-h)); overflow-y: auto; }
+    .filter-group { margin-bottom: 2rem; }
+    .filter-group-title { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 1rem; }
+    .filter-option { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer; font-size: 14px; color: var(--ink-soft); }
+    .filter-option input { accent-color: var(--accent); }
+    .filter-option:hover { color: var(--ink); }
+    .price-range { width: 100%; accent-color: var(--accent); }
+    .price-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-mute); margin-top: 6px; }
+    .plp-main { padding: 2rem; }
+    .plp-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+    .sort-select { border: 0.5px solid var(--border); background: var(--white); padding: 8px 12px; font-size: 13px; font-family: var(--ff-body); color: var(--ink); border-radius: var(--radius); outline: none; }
+    .active-filters { display: flex; gap: 8px; flex-wrap: wrap; }
+    .filter-tag { display: flex; align-items: center; gap: 6px; background: var(--paper-warm); border: 0.5px solid var(--border); padding: 4px 10px; font-size: 12px; border-radius: 20px; }
+    .filter-tag-remove { color: var(--ink-mute); cursor: pointer; font-size: 14px; line-height: 1; }
+    .plp-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; }
+  </style>
+  <!-- ADOBE LAUNCH EMBED
+  <script src="https://assets.adobedtm.com/YOUR_PROPERTY_ID/launch-EN_XXXXX.min.js" async></script>
+  -->
+</head>
+<body>
+<div id="vaux-nav"></div>
+
+<!-- CATEGORY BANNER with real image -->
+<div class="plp-cat-banner" id="cat-banner">
+  <img id="cat-banner-img" src="" alt="">
+  <div class="plp-cat-banner-overlay"></div>
+  <div class="plp-cat-banner-content">
+    <h1 class="plp-cat-title" id="plp-title">Shop</h1>
+    <p class="plp-cat-count" id="plp-count">0 products</p>
+  </div>
+</div>
+
+<div class="breadcrumb container">
+  <a href="index.html">Home</a>
+  <span class="sep">/</span>
+  <span id="bc-cat">Shop</span>
+</div>
+
+<div class="plp-body">
+  <aside class="plp-sidebar">
+    <div class="filter-group">
+      <p class="filter-group-title">Category</p>
+      <label class="filter-option"><input type="checkbox" checked> Tops &amp; Blouses</label>
+      <label class="filter-option"><input type="checkbox"> Dresses</label>
+      <label class="filter-option"><input type="checkbox"> Trousers</label>
+      <label class="filter-option"><input type="checkbox"> Outerwear</label>
+      <label class="filter-option"><input type="checkbox"> Knitwear</label>
+      <label class="filter-option"><input type="checkbox"> Skirts</label>
+      <label class="filter-option"><input type="checkbox"> Shirts</label>
+    </div>
+    <div class="filter-group">
+      <p class="filter-group-title">Size</p>
+      <label class="filter-option"><input type="checkbox"> XS</label>
+      <label class="filter-option"><input type="checkbox" checked> S</label>
+      <label class="filter-option"><input type="checkbox" checked> M</label>
+      <label class="filter-option"><input type="checkbox"> L</label>
+      <label class="filter-option"><input type="checkbox"> XL</label>
+    </div>
+    <div class="filter-group">
+      <p class="filter-group-title">Price Range</p>
+      <input type="range" class="price-range" min="0" max="10000" value="10000" id="price-range"
+             oninput="document.getElementById('price-val').textContent=this.value>=10000?'Any':'₹'+parseInt(this.value).toLocaleString('en-IN');renderProducts()">
+      <div class="price-labels"><span>₹0</span><span id="price-val">Any</span></div>
+    </div>
+    <div class="filter-group">
+      <p class="filter-group-title">Colour</p>
+      <label class="filter-option"><input type="checkbox"> Black</label>
+      <label class="filter-option"><input type="checkbox"> White / Ivory</label>
+      <label class="filter-option"><input type="checkbox"> Beige / Nude</label>
+      <label class="filter-option"><input type="checkbox"> Navy</label>
+      <label class="filter-option"><input type="checkbox"> Terracotta</label>
+    </div>
+  </aside>
+  <div class="plp-main">
+    <div class="plp-toolbar">
+      <div class="active-filters" id="active-filters">
+        <span class="filter-tag">Size: S <span class="filter-tag-remove">&#10005;</span></span>
+        <span class="filter-tag">Size: M <span class="filter-tag-remove">&#10005;</span></span>
+      </div>
+      <select class="sort-select" id="sort-select" onchange="renderProducts()">
+        <option value="featured">Sort: Featured</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="newest">Newest First</option>
+      </select>
+    </div>
+    <div class="plp-grid" id="plp-grid"></div>
+  </div>
+</div>
+
+<div id="vaux-footer"></div>
+<div id="vaux-toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/footer.js"></script>
+<script src="js/analytics.js"></script>
+<script>
+  var params = new URLSearchParams(window.location.search);
+  var currentCat = params.get('cat') || 'All';
+  var searchQuery = (params.get('q') || '').trim().toLowerCase();
+
+  var pageLabel = searchQuery ? 'Search: "' + params.get('q') + '"' : currentCat;
+  document.title = 'DXP — ' + pageLabel;
+  document.getElementById('plp-title').textContent = pageLabel;
+  document.getElementById('bc-cat').textContent    = searchQuery ? 'Search' : currentCat;
+
+  var bannerImg = VAUX.CATEGORY_IMAGES[currentCat] || VAUX.CATEGORY_IMAGES['Women'];
+  document.getElementById('cat-banner-img').src = bannerImg;
+  document.getElementById('cat-banner-img').alt = currentCat;
+
+  // Pre-fill search input if arriving from search
+  if (searchQuery) {
+    var si = document.getElementById('search-input');
+    if (si) { si.value = params.get('q'); }
+  }
+
+  VAUX.nav.init(currentCat==='Women'?'plp-women':currentCat==='Men'?'plp-men':currentCat==='New Arrivals'?'plp-new':currentCat==='Sale'?'plp-sale':'');
+  VAUX.footer.init();
+
+  function matchesSearch(p, q) {
+    if (!q) return true;
+    return (p.name + ' ' + p.brand + ' ' + p.category + ' ' + p.subCategory).toLowerCase().indexOf(q) > -1;
+  }
+
+  function getFiltered() {
+    var maxPrice = parseInt(document.getElementById('price-range').value);
+    var sort = document.getElementById('sort-select').value;
+    var list = VAUX.PRODUCTS.filter(function(p) {
+      // If searching, ignore category filter and match query
+      if (searchQuery) return matchesSearch(p, searchQuery);
+      if (currentCat==='All') return true;
+      if (currentCat==='New Arrivals') return p.tag==='New';
+      return p.category===currentCat;
+    }).filter(function(p) { return p.price<=maxPrice; });
+    if (sort==='price-asc')  list.sort(function(a,b){return a.price-b.price;});
+    if (sort==='price-desc') list.sort(function(a,b){return b.price-a.price;});
+    return list;
+  }
+
+  function renderProducts() {
+    var products = getFiltered();
+    document.getElementById('plp-count').textContent = products.length + ' products';
+    var grid = document.getElementById('plp-grid');
+    if (!products.length) { grid.innerHTML='<p style="grid-column:1/-1;padding:4rem 0;text-align:center;color:var(--ink-mute);font-family:var(--ff-display);font-size:22px;font-weight:300">' + (searchQuery ? 'No results for &ldquo;' + params.get('q') + '&rdquo;' : 'No products match your filters.') + '</p>'; return; }
+    grid.innerHTML = products.map(function(p) {
+      return `<div class="product-card" onclick="window.location.href='pdp.html?id=${p.id}'">
+        <div class="product-img-wrap">
+          <img src="${p.image}" alt="${p.name}" loading="lazy">
+          ${p.tag?`<span class="product-tag ${p.tag.toLowerCase()}">${p.tag}</span>`:''}
+          <div class="product-actions">
+            <button class="product-action-btn" onclick="event.stopPropagation();quickAdd(${p.id})">Quick Add</button>
+            <button class="product-action-btn wish" onclick="event.stopPropagation()">&#9825;</button>
+          </div>
+        </div>
+        <p class="product-brand">${p.brand}</p>
+        <p class="product-name">${p.name}</p>
+        <p class="product-price">${p.oldPrice?'<span class="old">'+VAUX.fmt(p.oldPrice)+'</span><span class="sale">'+VAUX.fmt(p.price)+'</span>':VAUX.fmt(p.price)}</p>
+        <div class="product-swatches">${(p.swatches||[]).map(function(c){return '<div class="swatch" style="background:'+c+'"></div>';}).join('')}</div>
+      </div>`;
+    }).join('');
+    VAUX.analytics.productListView(products, currentCat + ' PLP');
+  }
+
+  function quickAdd(id) {
+    var p = VAUX.getProductById(id);
+    if (!p) return;
+    VAUX.addToCart(id,'M','Default',1);
+    VAUX.analytics.addToCart(p,'M','Default',1);
+    showToast(p.name + ' added to bag');
+  }
+
+  function showToast(msg) {
+    var t=document.getElementById('vaux-toast'); t.textContent=msg; t.classList.add('show');
+    setTimeout(function(){t.classList.remove('show');},2600);
+  }
+
+  renderProducts();
+  VAUX.analytics.pageView({ pageName:'dxp:plp:'+currentCat.toLowerCase().replace(/ /g,'-'), pageType:'plp', siteSectionL1:currentCat, channel:'ecommerce' });
+</script>
+</body>
+</html>

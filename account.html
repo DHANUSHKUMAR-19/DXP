@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DXP — My Account</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .account-layout { display: grid; grid-template-columns: 260px 1fr; gap: 0; min-height: calc(100vh - var(--nav-h) - 64px); }
+
+    /* Sidebar */
+    .account-sidebar { border-right: 0.5px solid var(--border); padding: 2.5rem 2rem; }
+    .profile-avatar  {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: var(--ink); color: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--ff-display); font-size: 26px; font-weight: 400;
+      margin-bottom: 1rem;
+    }
+    .profile-name   { font-family: var(--ff-display); font-size: 22px; font-weight: 400; margin-bottom: 4px; }
+    .profile-email  { font-size: 13px; color: var(--ink-mute); margin-bottom: 2rem; }
+    .sidebar-nav    { display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-item   {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: var(--radius);
+      font-size: 14px; color: var(--ink-soft);
+      cursor: pointer; transition: all 0.15s; border: none; background: none;
+      font-family: var(--ff-body); text-align: left; width: 100%;
+    }
+    .sidebar-item svg { flex-shrink: 0; }
+    .sidebar-item:hover  { background: var(--paper-warm); color: var(--ink); }
+    .sidebar-item.active { background: var(--ink); color: var(--white); }
+    .sidebar-divider { border: none; border-top: 0.5px solid var(--border); margin: 1rem 0; }
+    .sidebar-item.danger { color: var(--danger); }
+    .sidebar-item.danger:hover { background: #fcebeb; }
+
+    /* Content area */
+    .account-content { padding: 2.5rem 3rem; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .panel-title { font-family: var(--ff-display); font-size: 34px; font-weight: 300; margin-bottom: 2rem; }
+
+    /* Overview */
+    .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 2.5rem; }
+    .stat-card { background: var(--paper-warm); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; }
+    .stat-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 8px; }
+    .stat-val   { font-family: var(--ff-display); font-size: 28px; font-weight: 400; }
+    .stat-sub   { font-size: 12px; color: var(--ink-mute); margin-top: 4px; }
+
+    .recent-orders-title { font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 1rem; }
+
+    /* Orders */
+    .order-card { border: 0.5px solid var(--border); border-radius: var(--radius); margin-bottom: 1rem; overflow: hidden; }
+    .order-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; background: var(--paper-warm); border-bottom: 0.5px solid var(--border); }
+    .order-num   { font-weight: 500; font-size: 14px; }
+    .order-date  { font-size: 12px; color: var(--ink-mute); margin-top: 2px; }
+    .order-status { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; }
+    .status-delivered { background: #eaf3de; color: #3b6d11; }
+    .status-shipped   { background: #e6f1fb; color: #185fa5; }
+    .status-processing{ background: #faeeda; color: #854f0b; }
+    .order-body { padding: 1.25rem; }
+    .order-items-row { display: flex; gap: 12px; margin-bottom: 1rem; }
+    .order-item-img  { width: 60px; aspect-ratio: 3/4; border-radius: var(--radius); overflow: hidden; flex-shrink: 0; background: var(--paper-warm); }
+    .order-item-img img { width: 100%; height: 100%; object-fit: cover; }
+    .order-item-info { font-size: 13px; }
+    .order-item-name { font-weight: 500; margin-bottom: 2px; }
+    .order-item-meta { color: var(--ink-mute); font-size: 12px; }
+    .order-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 0.5px solid var(--border); }
+    .order-total { font-weight: 500; font-size: 15px; }
+    .order-actions { display: flex; gap: 8px; }
+    .order-action-btn { padding: 7px 14px; border: 0.5px solid var(--border); font-size: 12px; border-radius: var(--radius); font-family: var(--ff-body); cursor: pointer; transition: all 0.15s; background: none; }
+    .order-action-btn:hover { background: var(--ink); color: var(--white); border-color: var(--ink); }
+
+    /* Wishlist */
+    .wishlist-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; }
+    .wishlist-empty { text-align: center; padding: 4rem 0; }
+    .wishlist-empty-title { font-family: var(--ff-display); font-size: 28px; font-weight: 300; margin-bottom: 0.75rem; }
+    .wishlist-empty-sub   { font-size: 14px; color: var(--ink-mute); margin-bottom: 2rem; }
+    .wishlist-item { position: relative; }
+    .wishlist-remove { position: absolute; top: 10px; right: 10px; z-index: 3; width: 28px; height: 28px; background: var(--white); border: 0.5px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; color: var(--ink-mute); transition: all 0.15s; }
+    .wishlist-remove:hover { background: var(--danger); color: var(--white); border-color: var(--danger); }
+
+    /* Addresses */
+    .addresses-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1rem; }
+    .address-card { border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; position: relative; }
+    .address-card.default { border-color: var(--accent); }
+    .address-default-badge { position: absolute; top: 12px; right: 12px; background: var(--accent); color: var(--white); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; }
+    .address-name { font-weight: 500; margin-bottom: 4px; }
+    .address-lines { font-size: 14px; color: var(--ink-soft); line-height: 1.7; }
+    .address-actions { display: flex; gap: 8px; margin-top: 1rem; }
+    .address-btn { padding: 6px 14px; border: 0.5px solid var(--border); font-size: 12px; border-radius: var(--radius); font-family: var(--ff-body); cursor: pointer; background: none; transition: all 0.15s; }
+    .address-btn:hover { background: var(--ink); color: var(--white); border-color: var(--ink); }
+    .add-address-card { border: 0.5px dashed var(--border-strong); border-radius: var(--radius); padding: 1.25rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; min-height: 140px; transition: all 0.15s; color: var(--ink-mute); }
+    .add-address-card:hover { border-color: var(--accent); color: var(--accent); background: rgba(200,169,110,0.04); }
+    .add-address-card svg { font-size: 24px; }
+    .add-address-label { font-size: 13px; }
+
+    /* Settings */
+    .settings-section { margin-bottom: 2.5rem; }
+    .settings-section-title { font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 0.5px solid var(--border); }
+    .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 0.875rem 0; border-bottom: 0.5px solid var(--border); }
+    .settings-row:last-child { border-bottom: none; }
+    .settings-label { font-size: 14px; }
+    .settings-sub   { font-size: 12px; color: var(--ink-mute); margin-top: 2px; }
+    .toggle-switch  { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; cursor: pointer; inset: 0;
+      background: var(--border-strong); border-radius: 22px; transition: 0.2s;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute;
+      height: 16px; width: 16px; left: 3px; bottom: 3px;
+      background: var(--white); border-radius: 50%; transition: 0.2s;
+    }
+    .toggle-switch input:checked + .toggle-slider { background: var(--accent); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
+    .settings-edit-btn { padding: 6px 14px; border: 0.5px solid var(--border); font-size: 12px; border-radius: var(--radius); cursor: pointer; font-family: var(--ff-body); background: none; transition: all 0.15s; }
+    .settings-edit-btn:hover { border-color: var(--ink); background: var(--ink); color: var(--white); }
+
+    /* Loyalty */
+    .loyalty-card {
+      background: var(--ink); color: var(--white);
+      border-radius: var(--radius); padding: 2rem;
+      margin-bottom: 2rem; position: relative; overflow: hidden;
+    }
+    .loyalty-pattern {
+      position: absolute; inset: 0;
+      background-image: repeating-linear-gradient(45deg, rgba(200,169,110,0.06) 0px, rgba(200,169,110,0.06) 1px, transparent 1px, transparent 22px);
+    }
+    .loyalty-content { position: relative; z-index: 1; }
+    .loyalty-tier    { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+    .loyalty-points  { font-family: var(--ff-display); font-size: 48px; font-weight: 300; margin-bottom: 4px; }
+    .loyalty-points em { font-style: italic; color: var(--accent); }
+    .loyalty-sub     { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 1.5rem; }
+    .loyalty-bar-wrap { background: rgba(255,255,255,0.15); border-radius: 4px; height: 6px; margin-bottom: 8px; }
+    .loyalty-bar     { background: var(--accent); border-radius: 4px; height: 6px; width: 62%; }
+    .loyalty-bar-label { display: flex; justify-content: space-between; font-size: 11px; color: rgba(255,255,255,0.45); }
+  </style>
+  <!-- ADOBE LAUNCH EMBED
+  <script src="https://assets.adobedtm.com/YOUR_PROPERTY_ID/launch-EN_XXXXX.min.js" async></script>
+  -->
+</head>
+<body>
+<div id="vaux-nav"></div>
+
+<div class="breadcrumb container">
+  <a href="index.html">Home</a>
+  <span class="sep">/</span>
+  <span>My Account</span>
+</div>
+
+<div class="account-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="account-sidebar">
+    <div class="profile-avatar" id="avatar-initials">DK</div>
+    <p class="profile-name" id="sidebar-name">Dhanush Kumar</p>
+    <p class="profile-email" id="sidebar-email">dhanush@adobe.com</p>
+
+    <nav class="sidebar-nav">
+      <button class="sidebar-item active" onclick="switchTab('overview',this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Overview
+      </button>
+      <button class="sidebar-item" onclick="switchTab('orders',this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        Orders
+        <span style="margin-left:auto;background:var(--ink-mute);color:var(--white);font-size:10px;padding:2px 7px;border-radius:10px" id="order-badge">3</span>
+      </button>
+      <button class="sidebar-item" onclick="switchTab('wishlist',this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        Wishlist
+        <span style="margin-left:auto;background:var(--ink-mute);color:var(--white);font-size:10px;padding:2px 7px;border-radius:10px">4</span>
+      </button>
+      <button class="sidebar-item" onclick="switchTab('addresses',this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Addresses
+      </button>
+      <button class="sidebar-item" onclick="switchTab('settings',this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </button>
+      <hr class="sidebar-divider">
+      <button class="sidebar-item danger" onclick="showToast('Signed out successfully')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
+    </nav>
+  </aside>
+
+  <!-- CONTENT -->
+  <div class="account-content">
+
+    <!-- OVERVIEW TAB -->
+    <div class="tab-panel active" id="tab-overview">
+      <h1 class="panel-title">Welcome back, <em style="font-style:italic;color:var(--accent)">Dhanush</em></h1>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <p class="stat-label">Total Orders</p>
+          <p class="stat-val">12</p>
+          <p class="stat-sub">Since Jan 2024</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label">Total Spent</p>
+          <p class="stat-val">₹58,420</p>
+          <p class="stat-sub">Lifetime value</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label">DXP Points</p>
+          <p class="stat-val">1,240</p>
+          <p class="stat-sub">Gold Tier</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label">Wishlist</p>
+          <p class="stat-val">4</p>
+          <p class="stat-sub">Items saved</p>
+        </div>
+      </div>
+
+      <!-- Loyalty card -->
+      <div class="loyalty-card">
+        <div class="loyalty-pattern"></div>
+        <div class="loyalty-content">
+          <p class="loyalty-tier">Gold Tier Member</p>
+          <p class="loyalty-points">1,<em>240</em> pts</p>
+          <p class="loyalty-sub">760 more points to reach Platinum</p>
+          <div class="loyalty-bar-wrap"><div class="loyalty-bar"></div></div>
+          <div class="loyalty-bar-label"><span>Gold (0)</span><span>Platinum (2,000)</span></div>
+        </div>
+      </div>
+
+      <!-- Recent orders -->
+      <p class="recent-orders-title">Recent Orders</p>
+      <div id="overview-orders"></div>
+    </div>
+
+    <!-- ORDERS TAB -->
+    <div class="tab-panel" id="tab-orders">
+      <h1 class="panel-title">My Orders</h1>
+      <div id="all-orders"></div>
+    </div>
+
+    <!-- WISHLIST TAB -->
+    <div class="tab-panel" id="tab-wishlist">
+      <h1 class="panel-title">Wishlist</h1>
+      <div class="wishlist-grid" id="wishlist-grid"></div>
+    </div>
+
+    <!-- ADDRESSES TAB -->
+    <div class="tab-panel" id="tab-addresses">
+      <h1 class="panel-title">Saved Addresses</h1>
+      <div class="addresses-grid">
+        <div class="address-card default">
+          <span class="address-default-badge">Default</span>
+          <p class="address-name">Dhanush Kumar</p>
+          <p class="address-lines">Flat 204, Prestige Elysian<br>Bannerghatta Road<br>Bengaluru, Karnataka 560076<br>+91 98765 43210</p>
+          <div class="address-actions">
+            <button class="address-btn">Edit</button>
+            <button class="address-btn">Remove</button>
+          </div>
+        </div>
+        <div class="address-card">
+          <p class="address-name">Office — Adobe</p>
+          <p class="address-lines">Adobe India Pvt Ltd<br>Prestige Ferns Galaxy<br>Whitefield, Bengaluru 560066<br>+91 98765 43210</p>
+          <div class="address-actions">
+            <button class="address-btn">Edit</button>
+            <button class="address-btn">Set as Default</button>
+          </div>
+        </div>
+        <div class="add-address-card" onclick="showToast('Add address coming soon')">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          <span class="add-address-label">Add New Address</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS TAB -->
+    <div class="tab-panel" id="tab-settings">
+      <h1 class="panel-title">Account Settings</h1>
+
+      <div class="settings-section">
+        <p class="settings-section-title">Personal Information</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input type="text" class="form-input" value="Dhanush">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input type="text" class="form-input" value="Kumar">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" value="dhanush@adobe.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone</label>
+            <input type="tel" class="form-input" value="+91 98765 43210">
+          </div>
+        </div>
+        <button class="btn-primary" onclick="showToast('Profile updated successfully')">Save Changes</button>
+      </div>
+
+      <div class="settings-section">
+        <p class="settings-section-title">Password</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+          <div class="form-group">
+            <label class="form-label">Current Password</label>
+            <input type="password" class="form-input" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+          </div>
+          <div></div>
+          <div class="form-group">
+            <label class="form-label">New Password</label>
+            <input type="password" class="form-input" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm New Password</label>
+            <input type="password" class="form-input" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+          </div>
+        </div>
+        <button class="btn-outline" onclick="showToast('Password updated')">Update Password</button>
+      </div>
+
+      <div class="settings-section">
+        <p class="settings-section-title">Notifications</p>
+        <div class="settings-row">
+          <div>
+            <p class="settings-label">Order updates</p>
+            <p class="settings-sub">Shipping, delivery, and return notifications</p>
+          </div>
+          <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="settings-row">
+          <div>
+            <p class="settings-label">New arrivals</p>
+            <p class="settings-sub">Be first to know about new collections</p>
+          </div>
+          <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="settings-row">
+          <div>
+            <p class="settings-label">Sale alerts</p>
+            <p class="settings-sub">Exclusive member discounts and flash sales</p>
+          </div>
+          <label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="settings-row">
+          <div>
+            <p class="settings-label">Wishlist price drops</p>
+            <p class="settings-sub">Get notified when a saved item goes on sale</p>
+          </div>
+          <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="settings-row">
+          <div>
+            <p class="settings-label">Marketing emails</p>
+            <p class="settings-sub">Style guides, lookbooks, and editorial content</p>
+          </div>
+          <label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <p class="settings-section-title">Preferences</p>
+        <div class="settings-row">
+          <div>
+            <p class="settings-label">Default size</p>
+            <p class="settings-sub">Pre-select your size on product pages</p>
+          </div>
+          <select class="form-select" style="width:auto;padding:7px 12px">
+            <option>M</option><option>XS</option><option>S</option><option>L</option><option>XL</option>
+          </select>
+        </div>
+        <div class="settings-row">
+          <div>
+            <p class="settings-label">Currency</p>
+            <p class="settings-sub">Prices displayed in</p>
+          </div>
+          <select class="form-select" style="width:auto;padding:7px 12px">
+            <option>INR (₹)</option><option>USD ($)</option><option>EUR (&euro;)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <p class="settings-section-title" style="color:var(--danger);border-color:rgba(192,90,58,0.2)">Danger Zone</p>
+        <div class="settings-row">
+          <div>
+            <p class="settings-label">Delete Account</p>
+            <p class="settings-sub">Permanently remove your account and all data</p>
+          </div>
+          <button class="settings-edit-btn" style="border-color:var(--danger);color:var(--danger)" onclick="showToast('Please contact support to delete your account')">Delete</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="vaux-footer"></div>
+<div id="vaux-toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/footer.js"></script>
+<script src="js/analytics.js"></script>
+<script>
+  VAUX.nav.init('');
+  VAUX.footer.init();
+
+  // Sample orders data
+  var ORDERS = [
+    {
+      id: 'VAX-48291', date: '12 May 2025', status: 'Delivered',
+      items: [
+        { name: 'Linen Wrap Dress', brand: 'Studio Almeria', size: 'M', image: VAUX.PRODUCTS[0].image, price: 4299 },
+        { name: 'Silk Cami Top',    brand: 'Studio Almeria', size: 'S', image: VAUX.PRODUCTS[3].image, price: 3199 }
+      ],
+      total: 8898
+    },
+    {
+      id: 'VAX-37104', date: '28 Apr 2025', status: 'Delivered',
+      items: [
+        { name: 'Oxford Shirt', brand: 'Nord Craft', size: 'L', image: VAUX.PRODUCTS[5].image, price: 2999 }
+      ],
+      total: 3539
+    },
+    {
+      id: 'VAX-29836', date: '5 Apr 2025', status: 'Delivered',
+      items: [
+        { name: 'Merino Turtleneck', brand: 'Woolen & Co', size: 'M', image: VAUX.PRODUCTS[6].image, price: 5499 },
+        { name: 'Slim Chino',        brand: 'Nord Craft',  size: '32', image: VAUX.PRODUCTS[4].image, price: 3499 }
+      ],
+      total: 10588
+    }
+  ];
+
+  function orderCardHTML(order) {
+    var statusClass = order.status === 'Delivered' ? 'status-delivered' : order.status === 'Shipped' ? 'status-shipped' : 'status-processing';
+    return `<div class="order-card">
+      <div class="order-header">
+        <div>
+          <p class="order-num">${order.id}</p>
+          <p class="order-date">${order.date}</p>
+        </div>
+        <span class="order-status ${statusClass}">${order.status}</span>
+      </div>
+      <div class="order-body">
+        <div class="order-items-row">
+          ${order.items.map(function(item) {
+            return `<div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">
+              <div class="order-item-img"><img src="${item.image}" alt="${item.name}"></div>
+              <div class="order-item-info">
+                <p class="order-item-name">${item.name}</p>
+                <p class="order-item-meta">${item.brand} &middot; Size ${item.size} &middot; ${VAUX.fmt(item.price)}</p>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+        <div class="order-footer">
+          <span class="order-total">Total: ${VAUX.fmt(order.total)}</span>
+          <div class="order-actions">
+            <button class="order-action-btn">Track Order</button>
+            <button class="order-action-btn" onclick="showToast('Return requested for ${order.id}')">Return</button>
+            <button class="order-action-btn" onclick="window.location.href='plp.html?cat=All'">Buy Again</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  // Render overview orders (latest 2)
+  document.getElementById('overview-orders').innerHTML = ORDERS.slice(0,2).map(orderCardHTML).join('');
+  // Render all orders
+  document.getElementById('all-orders').innerHTML = ORDERS.map(orderCardHTML).join('');
+
+  // Wishlist - use first 4 products
+  var wishlistProducts = VAUX.PRODUCTS.slice(0,4);
+  document.getElementById('wishlist-grid').innerHTML = wishlistProducts.map(function(p) {
+    return `<div class="wishlist-item product-card">
+      <div class="product-img-wrap" onclick="window.location.href='pdp.html?id=${p.id}'">
+        <img src="${p.image}" alt="${p.name}" loading="lazy">
+        ${p.tag ? `<span class="product-tag ${p.tag.toLowerCase()}">${p.tag}</span>` : ''}
+        <div class="product-actions">
+          <button class="product-action-btn" onclick="event.stopPropagation();VAUX.addToCart(${p.id},'M','Default',1);showToast('${p.name} added to bag')">Add to Bag</button>
+        </div>
+        <button class="wishlist-remove" onclick="event.stopPropagation();showToast('Removed from wishlist')">&#10005;</button>
+      </div>
+      <p class="product-brand">${p.brand}</p>
+      <p class="product-name">${p.name}</p>
+      <p class="product-price">${p.oldPrice ? '<span class="old">'+VAUX.fmt(p.oldPrice)+'</span><span class="sale">'+VAUX.fmt(p.price)+'</span>' : VAUX.fmt(p.price)}</p>
+    </div>`;
+  }).join('');
+
+  function switchTab(tab, el) {
+    document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+    document.querySelectorAll('.sidebar-item').forEach(function(b) { b.classList.remove('active'); });
+    document.getElementById('tab-' + tab).classList.add('active');
+    el.classList.add('active');
+  }
+
+  function showToast(msg) {
+    var t = document.getElementById('vaux-toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 2600);
+  }
+
+  // ACDL: page view
+  VAUX.analytics.pageView({ pageName: 'dxp:account', pageType: 'account', siteSectionL1: 'account', channel: 'ecommerce' });
+</script>
+</body>
+</html>
