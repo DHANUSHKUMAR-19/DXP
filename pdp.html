@@ -210,7 +210,7 @@
     // Recommendations
     var recs = VAUX.PRODUCTS.filter(function(p){return p.id!==product.id;}).slice(0,4);
     document.getElementById('rec-grid').innerHTML = recs.map(function(p) {
-      return `<div class="product-card" onclick="window.location.href='pdp.html?id=${p.id}'">
+      return `<div class="product-card" onclick="VAUX.analytics.trackedNavigate('${p.name}', 'recommendations', 'pdp.html?id=${p.id}')">
         <div class="product-img-wrap">
           <img src="${p.image}" alt="${p.name}" loading="lazy">
           ${p.tag?`<span class="product-tag ${p.tag.toLowerCase()}">${p.tag}</span>`:''}

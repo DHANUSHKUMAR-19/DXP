@@ -305,6 +305,16 @@ window.VAUX.analytics.linkClick = function (name, region, type, linkUrl) {
   }, true);
 }());
 
+// ── Tracked Navigate (for JS-driven navigation without <a> tags) ─────────────
+// Use this wherever window.location.href is set directly (product cards, buttons).
+// Pushes linkClick to datalayer first, then navigates after 100 ms.
+
+window.VAUX.analytics.trackedNavigate = function (name, region, url) {
+  var absUrl = new URL(url, window.location.href).href;
+  window.VAUX.analytics.linkClick(name, region, 'internal', absUrl);
+  setTimeout(function () { window.location.href = url; }, 100);
+};
+
 // ── Utility: read query param ─────────────────────────────────────────────────
 
 window.VAUX.analytics.getQueryParam = function (name) {

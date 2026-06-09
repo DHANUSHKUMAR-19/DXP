@@ -196,7 +196,7 @@
         showToast(p.name + ' added to bag');
         return;
       }
-      if (!e.target.classList.contains('wish')) window.location.href = 'pdp.html?id=' + p.id;
+      if (!e.target.classList.contains('wish')) VAUX.analytics.trackedNavigate(p.name, 'trending-products', 'pdp.html?id=' + p.id);
     });
     grid.appendChild(card);
   });

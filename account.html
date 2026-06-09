@@ -481,7 +481,7 @@
   var wishlistProducts = VAUX.PRODUCTS.slice(0,4);
   document.getElementById('wishlist-grid').innerHTML = wishlistProducts.map(function(p) {
     return `<div class="wishlist-item product-card">
-      <div class="product-img-wrap" onclick="window.location.href='pdp.html?id=${p.id}'">
+      <div class="product-img-wrap" onclick="VAUX.analytics.trackedNavigate('${p.name}', 'wishlist', 'pdp.html?id=${p.id}')">
         <img src="${p.image}" alt="${p.name}" loading="lazy">
         ${p.tag ? `<span class="product-tag ${p.tag.toLowerCase()}">${p.tag}</span>` : ''}
         <div class="product-actions">

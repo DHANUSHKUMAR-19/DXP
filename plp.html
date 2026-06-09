@@ -163,7 +163,7 @@
     var grid = document.getElementById('plp-grid');
     if (!products.length) { grid.innerHTML='<p style="grid-column:1/-1;padding:4rem 0;text-align:center;color:var(--ink-mute);font-family:var(--ff-display);font-size:22px;font-weight:300">' + (searchQuery ? 'No results for &ldquo;' + params.get('q') + '&rdquo;' : 'No products match your filters.') + '</p>'; return; }
     grid.innerHTML = products.map(function(p) {
-      return `<div class="product-card" onclick="window.location.href='pdp.html?id=${p.id}'">
+      return `<div class="product-card" onclick="VAUX.analytics.trackedNavigate('${p.name}', 'product-list', 'pdp.html?id=${p.id}')">
         <div class="product-img-wrap">
           <img src="${p.image}" alt="${p.name}" loading="lazy">
           ${p.tag?`<span class="product-tag ${p.tag.toLowerCase()}">${p.tag}</span>`:''}
