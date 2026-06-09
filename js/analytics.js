@@ -10,10 +10,16 @@
 //  and also set legacy s object vars for AppMeasurement if needed.
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Restore cross-page event history from sessionStorage; patch push to keep syncing it back.
 (function () {
-  var stored = [];
-  try { stored = JSON.parse(sessionStorage.getItem('vaux_dl') || '[]'); } catch (_) {}
+  var navType = (performance.getEntriesByType('navigation')[0] || {}).type;
+  var stored  = [];
+
+  if (navType !== 'reload') {
+    try { stored = JSON.parse(sessionStorage.getItem('vaux_dl') || '[]'); } catch (_) {}
+  } else {
+    sessionStorage.removeItem('vaux_dl');
+  }
+
   window.adobeDataLayer = stored;
 
   var _push = Array.prototype.push;
