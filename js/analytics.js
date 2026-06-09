@@ -280,7 +280,9 @@ window.VAUX.analytics.linkClick = function (name, region, type, linkUrl) {
     var link = e.target.closest('a[href]');
     if (!link) return;
 
-    var href   = link.getAttribute('href') || '';
+    var href = link.getAttribute('href') || '';
+    if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+
     var absUrl = resolveAbsoluteUrl(href);
     var name   = link.dataset.linkName
                  || link.textContent.trim().replace(/\s+/g, ' ').substring(0, 80)
@@ -289,8 +291,18 @@ window.VAUX.analytics.linkClick = function (name, region, type, linkUrl) {
     var region = getLinkRegion(link);
     var type   = getLinkType(absUrl);
 
-    window.VAUX.analytics.linkClick(name, region, type, absUrl);
-  }, true); // capture phase — fires before navigation
+    // For same-window navigations: block navigation briefly so Launch can process the push,
+    // then navigate after 100 ms. New-tab / ctrl+click / external links are let through immediately.
+    var opensNewTab = link.target === '_blank' || e.ctrlKey || e.metaKey || e.shiftKey || type === 'external';
+
+    if (!opensNewTab) {
+      e.preventDefault();
+      window.VAUX.analytics.linkClick(name, region, type, absUrl);
+      setTimeout(function () { window.location.href = absUrl; }, 100);
+    } else {
+      window.VAUX.analytics.linkClick(name, region, type, absUrl);
+    }
+  }, true);
 }());
 
 // ── Utility: read query param ─────────────────────────────────────────────────
