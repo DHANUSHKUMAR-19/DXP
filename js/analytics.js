@@ -10,30 +10,7 @@
 //  and also set legacy s object vars for AppMeasurement if needed.
 // ─────────────────────────────────────────────────────────────────────────────
 
-(function () {
-  // Universal event log — persists across page navigations for the lifetime of the tab.
-  // Stored in sessionStorage; never assigned to adobeDataLayer directly so Adobe Launch
-  // cannot re-process historical events.
-  var _log = [];
-  try { _log = JSON.parse(sessionStorage.getItem('vaux_dl') || '[]'); } catch (_) {}
-
-  window.VAUX       = window.VAUX       || {};
-  window.VAUX.eventLog = _log;           // full session history — read-only reference
-
-  // adobeDataLayer is always fresh per page load so Launch only sees truly new events.
-  window.adobeDataLayer = [];
-
-  // Patch push: new events go to Launch (via adobeDataLayer) AND the universal log.
-  var _push = Array.prototype.push;
-  window.adobeDataLayer.push = function () {
-    _push.apply(this, arguments);                           // → Adobe Launch picks this up
-    for (var i = 0; i < arguments.length; i++) {
-      _push.call(window.VAUX.eventLog, arguments[i]);       // → universal log grows
-    }
-    try { sessionStorage.setItem('vaux_dl', JSON.stringify(window.VAUX.eventLog)); } catch (_) {}
-    return this.length;
-  };
-}());
+window.adobeDataLayer = window.adobeDataLayer || [];
 window.VAUX = window.VAUX || {};
 window.VAUX.analytics = {};
 
