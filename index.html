@@ -4,6 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DXP — New Season Fashion</title>
+  <script>
+    ;(function(win, doc, style, timeout) {
+    var STYLE_ID = 'at-body-style';
+    function getParent() { return doc.getElementsByTagName('head')[0]; }
+    function addStyle(parent, id, def) {
+      if (!parent) { return; }
+      var style = doc.createElement('style');
+      style.id = id; style.innerHTML = def;
+      parent.appendChild(style);
+    }
+    function removeStyle(parent, id) {
+      if (!parent) { return; }
+      var style = doc.getElementById(id);
+      if (!style) { return; }
+      parent.removeChild(style);
+    }
+    addStyle(getParent(), STYLE_ID, style);
+    setTimeout(function() { removeStyle(getParent(), STYLE_ID); }, timeout);
+    }(window, document, "body {opacity: 0 !important}", 3000));
+  </script>
   <script src="https://assets.adobedtm.com/01296dd00565/0817753d32bc/launch-7acbfa7da51d-development.min.js" async></script>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
